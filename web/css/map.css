@@ -44,6 +44,7 @@ body, html, #map{
     top: 50%;
     right: 20px;
     transform: translate(0, -50%);
+    z-index: 10;
 }
 #cal{
     width: 60px;
