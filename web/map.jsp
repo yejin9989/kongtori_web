@@ -24,9 +24,17 @@
 
 <body>
   <div id="map"></div>
-  <div id="search">
-    <input type="text" id="search-box">
-    <div id="search-btn"></div>
+  <div id="float-frame">
+    <div id="search-area">
+      <input type="text" id="search-text">
+      <div id="search-btn"></div>
+    </div>
+    <div id="cal">
+      <img src="https://somoonhouse.com/kongtori/img/icon/cal.png">
+    </div>
+    <div id="slider-bar">
+
+    </div>
   </div>
 </body>
 <script>
