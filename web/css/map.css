@@ -14,6 +14,7 @@ body, html, #map{
     width: calc(100% - 66px);
     height: calc(100% - 66px);
     margin: 33px;
+    z-index: 10;
 }
 #search-area{
     position: absolute;
