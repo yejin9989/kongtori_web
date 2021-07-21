@@ -13,6 +13,7 @@ body, html, #map{
     top: 0;
     transform: translate(-50%, 30px);
     width: 100%;
+    height: 50px;
 }
 #search-box{
     background: white;
@@ -25,6 +26,13 @@ body, html, #map{
     border-radius: 26px;
     box-shadow: 3px 3px 4px 0px #0000002e;
 }
-#search-box::after{
-
+#search-btn {
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    background: url(https://somoonhouse.com/kongtori/img/icon/searchBtn.png);
+    background-size: 25px 25px;
+    left: 79%;
+    top: 50%;
+    transform: translate(0,-50%);
 }
