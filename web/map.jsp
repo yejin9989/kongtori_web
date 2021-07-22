@@ -32,7 +32,7 @@
 <div id="map"></div>
 <div id="float-frame">
   <div id="search-area">
-    <form id="search-building" name="search-building" method="POST" action="map_tori.jsp">
+    <form id="search-building" name="search-building" method="POST" action="map.jsp">
       <input type="text" id="search-text" name="search-text" placeholder="건물명을 입력해주세요." />
       <input id="search-btn" type="submit" value="" style="border:none;"/>
     </form>
