@@ -110,24 +110,28 @@
     var positions = [
         {
             title: '청룡관',
-            latlng: new kakao.maps.LatLng(35.888036, 128.6049341)
+            latlng: new kakao.maps.LatLng(35.888036, 128.6049341),
+            imageSrc: 'https://www.somoonhouse.com/kongtori/img/icon/매우위험.png'
         },
         {
             title: '공대9호관',
-            latlng: new kakao.maps.LatLng(35.8868806, 128.607485)
+            latlng: new kakao.maps.LatLng(35.8868806, 128.607485),
+            imageSrc: 'https://www.somoonhouse.com/kongtori/img/icon/위험.png'
         },
         {
             title: '공대12호관',
-            latlng: new kakao.maps.LatLng(35.8882208, 128.6095869)
+            latlng: new kakao.maps.LatLng(35.8882208, 128.6095869),
+            imageSrc: 'https://www.somoonhouse.com/kongtori/img/icon/매우위험.png'
         },
         {
             title: 'IT융복합공학관',
-            latlng: new kakao.maps.LatLng(35.8879478, 128.610912)
+            latlng: new kakao.maps.LatLng(35.8879478, 128.610912),
+            imageSrc: 'https://www.somoonhouse.com/kongtori/img/icon/보통핀.png'
         }
     ];
 
     // 마커 이미지의 이미지 주소입니다
-    var imageSrc = 'https://www.somoonhouse.com/kongtori/img/icon/매우위험.png';
+    // var imageSrc = 'https://www.somoonhouse.com/kongtori/img/icon/매우위험.png';
 
     for (var i = 0; i < positions.length; i ++) {
 
@@ -136,7 +140,7 @@
         imageOption = {offset: new kakao.maps.Point(29, 69)};
 
         // 마커 이미지를 생성합니다
-        var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+        var markerImage = new kakao.maps.MarkerImage(positions[i].imageSrc, imageSize, imageOption);
 
         // 마커를 생성합니다
         var marker = new kakao.maps.Marker({
