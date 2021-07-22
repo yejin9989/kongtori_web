@@ -223,14 +223,15 @@
 
     // 이게 내가 말했던 panTo 지정 좌표로 부드럽게 이동시키는 함수!
 
-    // function panTo(Xpos, Ypos) {
-    //     // 이동할 위도 경도 위치를 생성합니다
-    //     var moveLatLon = new kakao.maps.LatLng(Xpos, Ypos);
-    //
-    //     // 지도 중심을 부드럽게 이동시킵니다
-    //     // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
-    //     map.panTo(moveLatLon);
-    // }
+    function panTo(Xpos, Ypos) {
+        console.log(Xpos, Ypos);
+        // 이동할 위도 경도 위치를 생성합니다
+        var moveLatLon = new kakao.maps.LatLng(Xpos, Ypos);
+
+        // 지도 중심을 부드럽게 이동시킵니다
+        // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
+        map.panTo(moveLatLon);
+    }
 </script>
 <script>
     // 마커를 표시할 위치와 title 객체 배열입니다
@@ -266,7 +267,7 @@
     }).then((markers) => {
         console.log("모달창 테스트");
         for (var i = 0; i < markers.length; i ++) {
-            console.log(markers[i]);
+            // console.log(markers[i]);
             var content = '<div class="wrap" style="background:white;height:fit-content;width:fit-content;">' +
                 '모달창입니다.' +
                 '</div>';
@@ -279,10 +280,14 @@
                 position: markers[i].getPosition()
             });
 
+            let X = markers[i].getPosition().Ma;
+            let Y = markers[i].getPosition().La;
+
             // 마커를 클릭했을 때 커스텀 오버레이를 표시합니다
             kakao.maps.event.addListener(markers[i], 'click', function () {
                 //overlay.setMap(map);
-                modalPopUp();
+                panTo(X, Y);
+                setTimeout("modalPopUp()", 400);
             });
 
         }
