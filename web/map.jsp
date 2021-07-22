@@ -53,7 +53,7 @@
     String sql = "";
     ResultSet rs = null;
 
-    if(search.equals("")) {
+    if(search==null || search.equals("")) {
       Xpos = "35.8868829";
       Ypos = "128.6063104";
     } else {
