@@ -2,6 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page language="java" import="java.text.*,java.sql.*,java.util.Calendar,java.util.*" %>
 <%@ page language="java" import="myPackage.DBUtil" %>
+<% request.setCharacterEncoding("UTF-8"); %>
 
 <!DOCTYPE html>
 <html>
@@ -16,7 +17,7 @@
     String sql = "";
 
     //건물 Id
-    String Building_id = "415"; // 임시로 융복합관
+    String Building_id = request.getParameter("BuildingId");
 
     sql = "insert into ACCESS (Id, BuildingId, AccessAt) values(default, ?, default)";
     pstmt = conn.prepareStatement(sql);
