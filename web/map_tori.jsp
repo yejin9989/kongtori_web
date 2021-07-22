@@ -110,8 +110,9 @@
     var positions = $.get("./building_info.json", function(data) {
         return $(data.positions);
     }).then((positions) => { // 마커 생성 코드
+        let markers = [];
         for (var i = 0; i < positions.positions.length; i ++) {
-            var position = positions.positions
+            var position = positions.positions;
 
             // 마커 이미지의 이미지 크기 입니다
             var imageSize = new kakao.maps.Size(59, 69);
@@ -129,6 +130,36 @@
                 title : position[i]["title"], // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
                 image : markerImage // 마커 이미지
             });
+            console.log("marker",i,marker);
+            markers.push(marker);
+            console.log("markers========", markers, markers.length);
+        }
+        console.log("markers", markers);
+        return markers;
+    }).then((markers) => {
+        for (var i = 0; i < markers.length; i ++) {
+            console.log(markers[i]);
+            var content = '<div class="wrap" sytle="background:white;height:300px;width:300px;">' +
+                '모달창입니다.' +
+                '</div>';
+
+            // 마커 위에 커스텀오버레이를 표시합니다
+            // 마커를 중심으로 커스텀 오버레이를 표시하기위해 CSS를 이용해 위치를 설정했습니다
+            var overlay = new kakao.maps.CustomOverlay({
+                content: content,
+                map: map,
+                position: markers[i].getPosition()
+            });
+
+            // 마커를 클릭했을 때 커스텀 오버레이를 표시합니다
+            kakao.maps.event.addListener(markers[i], 'click', function () {
+                overlay.setMap(map);
+            });
+
+        }
+        // 커스텀 오버레이를 닫기 위해 호출되는 함수입니다
+        function closeOverlay() {
+            overlay.setMap(null);
         }
     });
 </script>
