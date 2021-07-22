@@ -107,74 +107,30 @@
 </script>
 <script>
     // 마커를 표시할 위치와 title 객체 배열입니다
-    var positions = [
-        {
-            title: '청룡관',
-            latlng: new kakao.maps.LatLng(35.888036, 128.6049341),
-            imageSrc: 'https://www.somoonhouse.com/kongtori/img/icon/매우위험.png'
-        },
-        {
-            title: '공대9호관',
-            latlng: new kakao.maps.LatLng(35.8868806, 128.607485),
-            imageSrc: 'https://www.somoonhouse.com/kongtori/img/icon/위험.png'
-        },
-        {
-            title: '공대12호관',
-            latlng: new kakao.maps.LatLng(35.8882208, 128.6095869),
-            imageSrc: 'https://www.somoonhouse.com/kongtori/img/icon/매우위험.png'
-        },
-        {
-            title: 'IT융복합공학관',
-            latlng: new kakao.maps.LatLng(35.8879478, 128.610912),
-            imageSrc: 'https://www.somoonhouse.com/kongtori/img/icon/보통핀.png'
-        },
-        {
-            title: '도서관',
-            latlng: new kakao.maps.LatLng(35.89179314720078, 128.612073437168),
-            imageSrc: 'https://www.somoonhouse.com/kongtori/img/icon/위험.png'
-        },
-        {
-            title: '본관',
-            latlng: new kakao.maps.LatLng(35.890438622838005, 128.61200986383307),
-            imageSrc: 'https://www.somoonhouse.com/kongtori/img/icon/보통핀.png'
-        },
-        {
-            title: 'IT4호관',
-            latlng: new kakao.maps.LatLng(35.887679751076476, 128.6106083410824),
-            imageSrc: 'https://www.somoonhouse.com/kongtori/img/icon/보통핀.png'
-        },
-        {
-            title: '복지관',
-            latlng: new kakao.maps.LatLng(35.888995202490804, 128.61448454782513),
-            imageSrc: 'https://www.somoonhouse.com/kongtori/img/icon/위험.png'
-        },
-        {
-            title: '수영장',
-            latlng: new kakao.maps.LatLng(35.89021659135035, 128.60583974362083),
-            imageSrc: 'https://www.somoonhouse.com/kongtori/img/icon/매우위험.png'
+    var positions = $.get("./building_info.json", function(data) {
+        return $(data.positions);
+    }).then((positions) => { // 마커 생성 코드
+        for (var i = 0; i < positions.positions.length; i ++) {
+            var position = positions.positions
+
+            // 마커 이미지의 이미지 크기 입니다
+            var imageSize = new kakao.maps.Size(59, 69);
+            imageOption = {offset: new kakao.maps.Point(29, 69)};
+
+            // 마커 이미지를 생성합니다
+            var markerImage = new kakao.maps.MarkerImage(position[i]["imageSrc"], imageSize, imageOption);
+
+            var latlng = new kakao.maps.LatLng(position[i]["Xaxis"], position[i]["Yaxis"]);
+
+            // 마커를 생성합니다
+            var marker = new kakao.maps.Marker({
+                map: map, // 마커를 표시할 지도
+                position: latlng, // 마커를 표시할 위치
+                title : position[i]["title"], // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+                image : markerImage // 마커 이미지
+            });
         }
-    ];
-
-    // 마커 이미지의 이미지 주소입니다
-    // var imageSrc = 'https://www.somoonhouse.com/kongtori/img/icon/매우위험.png';
-
-    for (var i = 0; i < positions.length; i ++) {
-
-        // 마커 이미지의 이미지 크기 입니다
-        var imageSize = new kakao.maps.Size(59, 69);
-        imageOption = {offset: new kakao.maps.Point(29, 69)};
-
-        // 마커 이미지를 생성합니다
-        var markerImage = new kakao.maps.MarkerImage(positions[i].imageSrc, imageSize, imageOption);
-
-        // 마커를 생성합니다
-        var marker = new kakao.maps.Marker({
-            map: map, // 마커를 표시할 지도
-            position: positions[i].latlng, // 마커를 표시할 위치
-            title : positions[i].title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
-            image : markerImage // 마커 이미지
-        });
-    }
+    });
 </script>
 <script>
     // var imageSrc = 'https://www.somoonhouse.com/kongtori/img/icon/매우위험.png', // 마커이미지의 주소입니다
