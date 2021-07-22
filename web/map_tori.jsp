@@ -83,7 +83,135 @@
     <%--    <%=Xpos%><%=Ypos%><%=search%>--%>
     <%--  </div>--%>
 </div>
+<div id="black">
+</div>
+<div id="modal">
+    <div id="modal-head">
+        <div id="knu-logo">
+            <div id="knu-logo-img"></div>
+        </div>
+        <h3>공대 9호관</h3>
+        <div id="modal-subhead">
+            <div id="face-icon"></div>
+            <span id="state">위험</span>
+            <span id="percent">(52%)</span>
+            <div id="info">i</div>
+            <div id="info-desc">
+                이 수치는 참고용 입니다. 위험도 계산식은 다음과 같습니다.<br>
+                65 * (기준시간 이내 출입한 사람 수 / (수용인원)) + <br>
+                20 * (취식여부 * 가중치 * 식사시간가중치) + <br>
+                15 * (운동여부*가중치) + <br>
+                5 * (계절가중치)
+            </div>
+        </div>
+    </div>
+    <div id="modal-body">
+        <div class="modal-item">
+            <div class="modal-item-img">
+                <div class="modal-item-icon">
+                    <div class="modal-item-icon-img" id="doorgray">
+                        <div id="door-red">
+                            <img src="https://somoonhouse.com/kongtori/img/icon/door_colored.png">
+                        </div>
+                    </div>
+                    <div class="modal-item-icon-img" id="doorcolored">
+                        <div id="door-gray">
+                            <img src="https://somoonhouse.com/kongtori/img/icon/door.png">
+                        </div>
+                    </div>
+                    <!--
+                    <img src="https://somoonhouse.com/kongtori/img/icon/door.png">
+                    <img src="https://somoonhouse.com/kongtori/img/icon/door_colored.png">
+                    -->
+                </div>
+            </div>
+            <h3 class="modal-item-title">1시간 이내 출입 인원</h3>
+            <h3 class="modal-item-subtitle">45명</h3>
+        </div>
+        <div class="modal-item">
+            <div class="modal-item-img">
+                <div class="modal-item-icon">
+                    <img src="https://somoonhouse.com/kongtori/img/icon/people.png">
+                </div>
+            </div>
+            <h3 class="modal-item-title">현재 예상 인원</h3>
+            <h3 class="modal-item-subtitle">약 73명</h3>
+        </div>
+        <div class="modal-item">
+            <div class="modal-item-img">
+                <div class="modal-item-icon">
+                    <div class="pie-chart"><span class="center">80%</span></div>
+                </div>
+            </div>
+            <h3 class="modal-item-title">공간 밀집도</h3>
+            <h3 class="modal-item-subtitle">혼잡</h3>
+        </div>
+        <div class="modal-item">
+            <div class="modal-item-img">
+                <div class="modal-item-icon">
+                    <img id="eatable-gray" src="https://somoonhouse.com/kongtori/img/icon/eatable.png">
+                    <img id="eatable-red" src="https://somoonhouse.com/kongtori/img/icon/eatablecolored.png">
+                </div>
+            </div>
+            <h3 class="modal-item-title">취식 가능 여부</h3>
+            <h3 class="modal-item-subtitle">불가능</h3>
+        </div>
+    </div>
+</div>
 </body>
+<script>
+    /*****UI 관련 스크립트*****/
+
+    //모달창 띄우기
+    function modalPopUp(){
+        //값 가져오기
+        var access_num_str = '45';
+        var density_percent_str = '80';
+        var eatable_str = '0';
+        //처리 할 자료형으로 변경 (숫자, bool값 등)
+        var access_num = (100 - Number(access_num_str)) + '%';
+        var density_percent = Number(density_percent_str);
+        var eatable;
+        if(eatable_str == '1'){eatable = true}
+        else {eatable = false}
+        //ui 조절
+        //반투명 검은 배경 덮고 모달창 띄우기
+        $('div#black').css('display', 'block');
+        $('div#modal').css('display', 'block');
+        //인포그래픽 그래프 조정
+        $('div#door-gray').css('height', '100%');
+        setTimeout(function (){$('div#door-gray').css('height', access_num);}, 10);
+        setTimeout(function (){draw(density_percent);}, 10);
+        if(eatable){$('#eatable-red').css('display', 'inline-block'); $('#eatable-gray').css('display', 'none'); }
+        else {$('#eatable-red').css('display', 'none'); $('#eatable-gray').css('display', 'inline-block'); }
+    }
+
+    //모달창 닫기
+    //반투명 검은 배경 누르면 모달창, 검은배경 다 닫기
+    $('div#black').click(function (){
+        $('div#black').css('display', 'none');
+        $('div#modal').css('display', 'none');
+    })
+
+
+    //원 그래프 그리는 거
+    function draw(percent){
+        var i = 1;
+        var func1 = setInterval(function(){
+            if(i<percent){
+                color(i);
+                i++
+            } else{
+                clearInterval(func1);
+            }
+        },10);
+    }
+    function color(i){
+        $('.pie-chart').css(
+            "background", "conic-gradient(#e15f5a 0%,#e15f5a " + i + "%, #c4c4c4 " + i + "%, #c4c4c4 100%)"
+        );
+    }
+</script>
 <script>
     var container = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
     var options = { //지도를 생성할 때 필요한 기본 옵션
@@ -134,6 +262,7 @@
         return markers;
     }).then((markers) => {
         for (var i = 0; i < markers.length; i ++) {
+            /*
             console.log(markers[i]);
             var content = '<div class="wrap" sytle="background:white;height:300px;width:300px;">' +
                 '모달창입니다.' +
@@ -148,8 +277,12 @@
             });
 
             // 마커를 클릭했을 때 커스텀 오버레이를 표시합니다
+             */
+
+            // 마커 클릭 시 모달창 띄우기
             kakao.maps.event.addListener(markers[i], 'click', function () {
-                overlay.setMap(map);
+                //overlay.setMap(map);
+                modalPopUp();
             });
 
         }
