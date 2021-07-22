@@ -127,6 +127,31 @@
             title: 'IT융복합공학관',
             latlng: new kakao.maps.LatLng(35.8879478, 128.610912),
             imageSrc: 'https://www.somoonhouse.com/kongtori/img/icon/보통핀.png'
+        },
+        {
+            title: '도서관',
+            latlng: new kakao.maps.LatLng(35.89179314720078, 128.612073437168),
+            imageSrc: 'https://www.somoonhouse.com/kongtori/img/icon/위험.png'
+        },
+        {
+            title: '본관',
+            latlng: new kakao.maps.LatLng(35.890438622838005, 128.61200986383307),
+            imageSrc: 'https://www.somoonhouse.com/kongtori/img/icon/보통핀.png'
+        },
+        {
+            title: 'IT4호관',
+            latlng: new kakao.maps.LatLng(35.887679751076476, 128.6106083410824),
+            imageSrc: 'https://www.somoonhouse.com/kongtori/img/icon/보통핀.png'
+        },
+        {
+            title: '복지관',
+            latlng: new kakao.maps.LatLng(35.888995202490804, 128.61448454782513),
+            imageSrc: 'https://www.somoonhouse.com/kongtori/img/icon/위험.png'
+        },
+        {
+            title: '수영장',
+            latlng: new kakao.maps.LatLng(35.89021659135035, 128.60583974362083),
+            imageSrc: 'https://www.somoonhouse.com/kongtori/img/icon/매우위험.png'
         }
     ];
 
