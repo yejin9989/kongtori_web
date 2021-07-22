@@ -26,6 +26,8 @@
   <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/kongtori/css/map.css"/>
   <!-- 서버에 올릴땐 css경로 아래처럼 바꾸어주어야함-->
   <!--link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/kongtori/css/map.css"/-->
+  <link rel="shortcut icon" href="https://somoonhouse.com/kongtori/img/icon/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="https://somoonhouse.com/kongtori/img/icon/favicon.ico" type="image/x-icon">
 </head>
 
 <body>
