@@ -90,7 +90,7 @@
         <div id="knu-logo">
             <div id="knu-logo-img"></div>
         </div>
-        <h3>공대 9호관</h3>
+        <h3 id="building-name">공대 9호관</h3>
         <div id="modal-subhead">
             <div id="face-icon"></div>
             <span id="state">위험</span>
@@ -126,7 +126,7 @@
                 </div>
             </div>
             <h3 class="modal-item-title">1시간 이내 출입 인원</h3>
-            <h3 class="modal-item-subtitle">45명</h3>
+            <h3 class="modal-item-subtitle" id="access-num">45명</h3>
         </div>
         <div class="modal-item">
             <div class="modal-item-img">
@@ -135,7 +135,7 @@
                 </div>
             </div>
             <h3 class="modal-item-title">현재 예상 인원</h3>
-            <h3 class="modal-item-subtitle">약 73명</h3>
+            <h3 class="modal-item-subtitle" id="people-num">약 73명</h3>
         </div>
         <div class="modal-item">
             <div class="modal-item-img">
@@ -144,7 +144,7 @@
                 </div>
             </div>
             <h3 class="modal-item-title">공간 밀집도</h3>
-            <h3 class="modal-item-subtitle">혼잡</h3>
+            <h3 class="modal-item-subtitle" id="density-state">혼잡</h3>
         </div>
         <div class="modal-item">
             <div class="modal-item-img">
@@ -154,7 +154,7 @@
                 </div>
             </div>
             <h3 class="modal-item-title">취식 가능 여부</h3>
-            <h3 class="modal-item-subtitle">불가능</h3>
+            <h3 class="modal-item-subtitle" id="eatable-state">불가능</h3>
         </div>
     </div>
 </div>
@@ -163,27 +163,84 @@
     /*****UI 관련 스크립트*****/
 
     //모달창 띄우기
-    function modalPopUp(){
+    function modalPopUp(pos){
+        console.log(pos);
         //값 가져오기
-        var access_num_str = '45';
-        var density_percent_str = '80';
-        var eatable_str = '0';
-        //처리 할 자료형으로 변경 (숫자, bool값 등)
-        var access_num = (100 - Number(access_num_str)) + '%';
-        var density_percent = Number(density_percent_str);
+        var dangerous_percent_str = pos["Dangerous"]; //위험도
+        var access_num_str = pos["anHourCnt"]; //1시간 이내 출입인원
+        var people_num = pos["Cnt"]; //예상인원
+        var density_percent_str = pos["Density"]; //밀집도
+        var eatable_str = pos["Eatable"]; //취식여부
+        var building_name = pos["Name"]; //건물이름
+
+        //처리 할 자료형으로 변경 (숫자, bool값, 문자열 등)
+        var dangerous_percent = parseInt(dangerous_percent_str) + '';
+        var density_percent = parseInt(Number(density_percent_str)+'');
+        var access_num = (100 - Number(density_percent)) + '%';
         var eatable;
-        if(eatable_str == '1'){eatable = true}
-        else {eatable = false}
+        var eatable_kor;
+        if(eatable_str == '1'){eatable = true; eatable_kor="가능"}
+        else {eatable = false; eatable_kor="불가능"}
+        var dangerous_color;
+        var dangerous_str;
+        var dangerous_url = "https://somoonhouse.com/kongtori/img/icon/";
+        if(parseInt(dangerous_percent)>80){
+            dangerous_str = "매우위험";
+            dangerous_url += "verydangerous_colored.png";
+            dangerous_color = "#282828";
+        }
+        else if(parseInt(dangerous_percent)>50){
+            dangerous_str = "위험";
+            dangerous_url += "dangerous_colored.png";
+            dangerous_color = "#ea483e";
+        }
+        else{
+            dangerous_str = "보통";
+            dangerous_url += "normal_colored.png";
+            dangerous_color = "#57a6df";
+        }
+        var density_kor;
+        if(parseInt(density_percent+'') > 80){
+            density_kor = '매우 혼잡';
+        }
+        else if(parseInt(density_percent+'') > 50){
+            density_kor = '혼잡';
+        }
+        else{
+            density_kor = '보통';
+        }
+
         //ui 조절
         //반투명 검은 배경 덮고 모달창 띄우기
         $('div#black').css('display', 'block');
         $('div#modal').css('display', 'block');
-        //인포그래픽 그래프 조정
+        //인포그래픽 그래프, 수치 조정
+        //건물이름 바꾸기
+        $('#building-name').text(building_name);
+        //얼굴아이콘 바꾸기
+        $('#face-icon').css('background', "url("+dangerous_url+")");
+        $('#face-icon').css('background-size', "15px 15px");
+        //위험도 상태 바꾸기
+        $('#state').text(dangerous_str);
+        $('#state').css('color', dangerous_color);
+        //위험도 바꾸기
+        $('#percent').text("("+dangerous_percent+"%)");
+        //1시간이내 출입인원 인포그래픽(밀집도사용)
         $('div#door-gray').css('height', '100%');
         setTimeout(function (){$('div#door-gray').css('height', access_num);}, 10);
+        //1시간이내 출입인원 수 변경
+        $('#access-num').text("약 " + access_num_str + "명");
+        //예상인원 수 변경
+        $('#people-num').text(people_num + "명");
+        //밀집도 인포그래피랑 밀집도 퍼센트 변경
         setTimeout(function (){draw(density_percent);}, 10);
+        //밀집도 글자 변경
+        $('#density-state').text(density_kor);
+        //취식여부 인포그래피 변경
         if(eatable){$('#eatable-red').css('display', 'inline-block'); $('#eatable-gray').css('display', 'none'); }
         else {$('#eatable-red').css('display', 'none'); $('#eatable-gray').css('display', 'inline-block'); }
+        //취식여부 글자부분 변경
+        $('#eatable-state').text(eatable_kor);
     }
 
     //모달창 닫기
@@ -210,7 +267,16 @@
         $('.pie-chart').css(
             "background", "conic-gradient(#e15f5a 0%,#e15f5a " + i + "%, #c4c4c4 " + i + "%, #c4c4c4 100%)"
         );
+        $('.center').text(i+'%');
     }
+
+    //info 창 띄우기
+    $('#info').mouseover(function (){
+        $('#info-desc').css('display', 'block');
+    })
+    $('#info').mouseout(function (){
+        $('#info-desc').css('display', 'none');
+    })
 </script>
 <script>
     var container = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
@@ -257,39 +323,48 @@
                 title : position[i]["Name"], // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
                 image : markerImage // 마커 이미지
             });
+
+            kakao.maps.event.addListener(marker, 'click', makeClickListener(map, marker, position[i]));
             markers.push(marker);
         }
         return markers;
     }).then((markers) => {
-        for (var i = 0; i < markers.length; i ++) {
-            /*
-            console.log(markers[i]);
-            var content = '<div class="wrap" sytle="background:white;height:300px;width:300px;">' +
-                '모달창입니다.' +
-                '</div>';
+        /*
+    for (var i = 0; i < markers.length; i ++) {
+        console.log(markers[i]);
+        var content = '<div class="wrap" sytle="background:white;height:300px;width:300px;">' +
+            '모달창입니다.' +
+            '</div>';
 
-            // 마커 위에 커스텀오버레이를 표시합니다
-            // 마커를 중심으로 커스텀 오버레이를 표시하기위해 CSS를 이용해 위치를 설정했습니다
-            var overlay = new kakao.maps.CustomOverlay({
-                content: content,
-                map: map,
-                position: markers[i].getPosition()
-            });
+        // 마커 위에 커스텀오버레이를 표시합니다
+        // 마커를 중심으로 커스텀 오버레이를 표시하기위해 CSS를 이용해 위치를 설정했습니다
+        var overlay = new kakao.maps.CustomOverlay({
+            content: content,
+            map: map,
+            position: markers[i].getPosition()
+        });
 
-            // 마커를 클릭했을 때 커스텀 오버레이를 표시합니다
-             */
+        // 마커를 클릭했을 때 커스텀 오버레이를 표시합니다
 
-            // 마커 클릭 시 모달창 띄우기
-            kakao.maps.event.addListener(markers[i], 'click', function () {
-                //overlay.setMap(map);
-                modalPopUp();
-            });
+        // 마커 클릭 시 모달창 띄우기
+        kakao.maps.event.addListener(markers[i], 'click', function () {
+            //overlay.setMap(map);
+            modalPopUp();
+        });
 
-        }
-        // 커스텀 오버레이를 닫기 위해 호출되는 함수입니다
-        function closeOverlay() {
-            overlay.setMap(null);
-        }
+    }
+    // 커스텀 오버레이를 닫기 위해 호출되는 함수입니다
+    function closeOverlay() {
+        overlay.setMap(null);
+    }
+         */
     });
+
+    //클로저 함수
+    function makeClickListener(map, marker, pos){
+        return function(){
+            modalPopUp(pos);
+        }
+    }
 </script>
 </html>
