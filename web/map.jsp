@@ -156,6 +156,10 @@
       <h3 class="modal-item-title">취식 가능 여부</h3>
       <h3 class="modal-item-subtitle" id="eatable-state">불가능</h3>
     </div>
+    <div class="modal-item-wide">
+      <img id="graph" src="https://somoonhouse.com/kongtori/img/graph.png">
+      <h3 class="modal-item-subtitle">현재 시간 기준 평균적으로 위험도가 높은 시간입니다.</h3>
+    </div>
   </div>
 </div>
 </body>
