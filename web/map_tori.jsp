@@ -32,7 +32,7 @@
 <div id="map"></div>
 <div id="float-frame">
     <div id="search-area">
-        <form id="search-building" name="search-building" method="POST" action="map.jsp">
+        <form id="search-building" name="search-building" method="POST" action="map_tori.jsp">
             <input type="text" id="search-text" name="search-text" placeholder="건물명을 입력해주세요." />
             <input id="search-btn" type="submit" value="" style="border:none;"/>
         </form>
@@ -107,13 +107,12 @@
 </script>
 <script>
     // 마커를 표시할 위치와 title 객체 배열입니다
-    var positions = $.get("./building_info.json", function(data) {
+    var positions = $.get("https://www.somoonhouse.com/kongtori/_calculate_dangerous.jsp", function(data) {
         return $(data.positions);
     }).then((positions) => { // 마커 생성 코드
         let markers = [];
-        for (var i = 0; i < positions.positions.length; i ++) {
-            var position = positions.positions;
-
+        let position = positions.positions;
+        for (var i = 0; i < position.length; i ++) {
             // 마커 이미지의 이미지 크기 입니다
             var imageSize = new kakao.maps.Size(59, 69);
             imageOption = {offset: new kakao.maps.Point(29, 69)};
@@ -127,14 +126,11 @@
             var marker = new kakao.maps.Marker({
                 map: map, // 마커를 표시할 지도
                 position: latlng, // 마커를 표시할 위치
-                title : position[i]["title"], // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+                title : position[i]["Name"], // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
                 image : markerImage // 마커 이미지
             });
-            console.log("marker",i,marker);
             markers.push(marker);
-            console.log("markers========", markers, markers.length);
         }
-        console.log("markers", markers);
         return markers;
     }).then((markers) => {
         for (var i = 0; i < markers.length; i ++) {
@@ -162,32 +158,5 @@
             overlay.setMap(null);
         }
     });
-</script>
-<script>
-    // var imageSrc = 'https://www.somoonhouse.com/kongtori/img/icon/매우위험.png', // 마커이미지의 주소입니다
-    //     imageSize = new kakao.maps.Size(59, 69), // 마커이미지의 크기입니다
-    //     imageOption = {offset: new kakao.maps.Point(29, 69)}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
-    //
-    // // 마커의 이미지정보를 가지고 있는 마커이미지를 생성합니다
-    // var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption),
-    //     markerPosition = new kakao.maps.LatLng(35.8868829, 128.6063104); // 마커가 표시될 위치입니다
-    //
-    // // 마커를 생성합니다
-    // var marker = new kakao.maps.Marker({
-    //     position: markerPosition,
-    //     image: markerImage // 마커이미지 설정
-    // });
-
-    // // 마커가 지도 위에 표시되도록 설정합니다
-    // marker.setMap(map);
-</script>
-<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-<script>
-    // 어떤 이벤트를 기준으로 해야할지 모르겠어서 일단 검색 버튼 누르는거 기준으로 삼았구
-    // 밑에처럼 해보고 setTimeout() 써서도 해봤는데 panTo 부르기도 전에 리로드하더라 ㅠㅠ
-
-    <%--$('#search-btn').click(function(){--%>
-    <%--    panTo("<%=Xpos%>" , "<%=Ypos%>");--%>
-    <%--})--%>
 </script>
 </html>
