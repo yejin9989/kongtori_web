@@ -23,10 +23,12 @@
     String StayTime = "";
     String TotalArea = "";
     String Cnt = "";
-    double Dangerous = 0;
+    double Dangerous = 0.0;
     double season = 0.5;
     double mealTime = 0.5;
     String standardTime = "";
+    String anHourBefore = "";
+    String anHourCnt = "";
 
     // building 정보 불러오기
     sql = "select * from BUILDING order by Id";
@@ -64,7 +66,7 @@
 
     for(LinkedHashMap<String, String> b : buildingInfoList) {
         // 포맷변경 ( 년월일 시분초)
-        SimpleDateFormat sdformat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+        SimpleDateFormat sdformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         // 현재시간
         Date date = new Date();
         Calendar cal = Calendar.getInstance();
@@ -78,8 +80,13 @@
             mealTime = 1;
         }
         // 기준시간 계산
-        cal.add(Calendar.MINUTE, Integer.parseInt(b.get("StayTime")));
+        cal.add(Calendar.MINUTE, (-1)*Integer.parseInt(b.get("StayTime")));
         standardTime = sdformat.format(cal.getTime());
+
+        Calendar cal2 = Calendar.getInstance();
+        cal2.setTime(date);
+        cal.add(Calendar.HOUR, -1);
+        anHourBefore = sdformat.format(cal.getTime());
 
         // 기준 시간 동안 해당 건물에 있었던 인원수 받아오기
         sql = "select IFNULL((select count(*) cnt from ACCESS where AccessAt > '" + standardTime + "' and BuildingId = " + b.get("Id") +"), 0) Cnt";
@@ -89,18 +96,28 @@
             Cnt = rs.getString("Cnt");
         }
 
-        // 위험도 계산: 65 * (기준시간 이내 출입한 사람 수 / (수용인원)) + 20 * (취식여부 * 식사시간가중치) + 15 * (운동여부) + 5 * (계절가중치)
-        Dangerous = 65 * (Integer.parseInt(Cnt)/Integer.parseInt(b.get("TotalArea"))) + 20 * (Integer.parseInt(b.get("Eatable")) * mealTime) + 15 * Integer.parseInt(b.get("Exercise")) + 5 * season;
+        sql = "select IFNULL((select count(*) cnt from ACCESS where AccessAt > '" + anHourBefore + "' and BuildingId = " + b.get("Id") +"), 0) Cnt";
+        pstmt = conn.prepareStatement(sql);
+        rs = pstmt.executeQuery();
+        while(rs.next()) {
+            anHourCnt = rs.getString("Cnt");
+        }
 
+        // 위험도 계산: 65 * (기준시간 이내 출입한 사람 수 / (수용인원)) + 20 * (취식여부 * 식사시간가중치) + 15 * (운동여부) + 5 * (계절가중치)
+        Dangerous = 65 * (Double.valueOf(Cnt)/(Double.valueOf(b.get("TotalArea"))/8.0)) + 20 * (Double.valueOf(b.get("Eatable")) * mealTime) + 15 * Double.valueOf(b.get("Exercise")) + 5 * season;
         // json에 담아서 리턴 이름, 아이디, 이미지, x, y
         JSONObject building = new JSONObject();
         building.put("Id", b.get("Id"));
         building.put("Name", b.get("Name"));
         building.put("Xaxis", b.get("Xaxis"));
         building.put("Yaxis", b.get("Yaxis"));
-        building.put("Dangerous", Dangerous);
+        building.put("anHourCnt", anHourCnt); // 1 시간 내 출입인원
+        building.put("Cnt", Cnt); // 출입인원
+        building.put("Density", (Double.valueOf(Cnt)/(Double.valueOf(b.get("TotalArea"))/8.0))); // 밀집도
+        building.put("Eatable", b.get("Eatable")); // 취식여부
+        building.put("Dangerous", Dangerous); // 위험도
         if(Dangerous > 80) {
-            building.put("imageSrcc", "https://www.somoonhouse.com/kongtori/img/icon/매우위험.png");
+            building.put("imageSrc", "https://www.somoonhouse.com/kongtori/img/icon/매우위험.png");
         } else if(Dangerous > 50) {
             building.put("imageSrc", "https://www.somoonhouse.com/kongtori/img/icon/위험.png");
         } else {
