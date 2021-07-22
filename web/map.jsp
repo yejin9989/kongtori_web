@@ -164,7 +164,7 @@
 
   //모달창 띄우기
   function modalPopUp(pos){
-    console.log(pos);
+    // console.log(pos);
     //값 가져오기
     var dangerous_percent_str = pos["Dangerous"]; //위험도
     var access_num_str = pos["anHourCnt"]; //1시간 이내 출입인원
@@ -287,17 +287,48 @@
   };
 
   var map = new kakao.maps.Map(container, options); //지도 생성 및 객체 리턴
+  // HTML5의 geolocation으로 사용할 수 있는지 확인합니다
+  if (navigator.geolocation) {
+    // GeoLocation을 이용해서 접속 위치를 얻어옵니다
+    navigator.geolocation.getCurrentPosition(function(position) {
+      var lat = position.coords.latitude, // 위도
+              lon = position.coords.longitude; // 경도
+      var locPosition = new kakao.maps.LatLng(lat, lon), // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
+              message = '<div style="padding:5px;">여기에 계신가요?!</div>'; // 인포윈도우에 표시될 내용입니다
+      // 마커와 인포윈도우를 표시합니다
+      displayMarker(locPosition, message);
+    });
+  } else { // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
+    var locPosition = new kakao.maps.LatLng(33.450701, 126.570667);
+    displayMarker(locPosition);
+  }
 
-  // 이게 내가 말했던 panTo 지정 좌표로 부드럽게 이동시키는 함수!
+  // 지도에 마커와 인포윈도우를 표시하는 함수입니다
+  function displayMarker(locPosition) {
+    // 마커를 생성합니다
+    // 마커 이미지의 이미지 크기 입니다
+    var imageSize = new kakao.maps.Size(30, 30);
+    imageOption = {offset: new kakao.maps.Point(15, 15)};
+    // 마커 이미지를 생성합니다
+    var markerImage = new kakao.maps.MarkerImage("https://www.somoonhouse.com/kongtori/img/icon/myLocation.png", imageSize, imageOption);
+    var marker = new kakao.maps.Marker({
+      map: map,
+      position: locPosition,
+      image : markerImage // 마커 이미지
+    });
+    // 지도 중심좌표를 접속위치로 변경합니다
+    map.setCenter(locPosition);
+  }
 
-  // function panTo(Xpos, Ypos) {
-  //     // 이동할 위도 경도 위치를 생성합니다
-  //     var moveLatLon = new kakao.maps.LatLng(Xpos, Ypos);
-  //
-  //     // 지도 중심을 부드럽게 이동시킵니다
-  //     // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
-  //     map.panTo(moveLatLon);
-  // }
+  // 지정 좌표로 부드럽게 이동시키기
+  function panTo(Xpos, Ypos) {
+    // 이동할 위도 경도 위치를 생성합니다
+    var moveLatLon = new kakao.maps.LatLng(Xpos, Ypos);
+
+    // 지도 중심을 부드럽게 이동시킵니다
+    // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
+    map.panTo(moveLatLon);
+  }
 </script>
 <script>
   let arr = null;
@@ -341,6 +372,18 @@
         kakao.maps.event.addListener(marker, 'click', makeClickListener(map, marker, position[i]));
         markers.push(marker);
       }
+      return markers;
+    }).then((markers) => {
+      for (var i = 0; i < markers.length; i ++) {
+        let X = markers[i].getPosition().Ma;
+        let Y = markers[i].getPosition().La;
+
+        // 마커 클릭 event
+        kakao.maps.event.addListener(markers[i], 'click', function () {
+          panTo(X, Y);
+          setTimeout("modalPopUp()", 400);
+        });
+      }
     });
 
   }
@@ -356,101 +399,5 @@
     }
     markers = [];
   }
-</script>
-<script>
-  var container = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
-  var options = { //지도를 생성할 때 필요한 기본 옵션
-    // center: new kakao.maps.LatLng(35.8868829, 128.6063104), //지도의 중심좌표.
-    center: new kakao.maps.LatLng("<%=Xpos%>", "<%=Ypos%>"), //지도의 중심좌표.
-    level: 3 //지도의 레벨(확대, 축소 정도)
-  };
-
-  var map = new kakao.maps.Map(container, options); //지도 생성 및 객체 리턴
-
-  // HTML5의 geolocation으로 사용할 수 있는지 확인합니다
-  if (navigator.geolocation) {
-    // GeoLocation을 이용해서 접속 위치를 얻어옵니다
-    navigator.geolocation.getCurrentPosition(function(position) {
-      var lat = position.coords.latitude, // 위도
-              lon = position.coords.longitude; // 경도
-      var locPosition = new kakao.maps.LatLng(lat, lon), // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
-              message = '<div style="padding:5px;">여기에 계신가요?!</div>'; // 인포윈도우에 표시될 내용입니다
-      // 마커와 인포윈도우를 표시합니다
-      displayMarker(locPosition, message);
-    });
-  } else { // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
-    var locPosition = new kakao.maps.LatLng(33.450701, 126.570667),
-            message = 'geolocation을 사용할수 없어요..'
-    displayMarker(locPosition, message);
-  }
-
-  // 지도에 마커와 인포윈도우를 표시하는 함수입니다
-  function displayMarker(locPosition, message) {
-    // 마커를 생성합니다
-    // 마커 이미지의 이미지 크기 입니다
-    var imageSize = new kakao.maps.Size(30, 30);
-    imageOption = {offset: new kakao.maps.Point(15, 15)};
-    // 마커 이미지를 생성합니다
-    var markerImage = new kakao.maps.MarkerImage("https://www.somoonhouse.com/kongtori/img/icon/myLocation.png", imageSize, imageOption);
-    var marker = new kakao.maps.Marker({
-      map: map,
-      position: locPosition,
-      image : markerImage // 마커 이미지
-    });
-    // 지도 중심좌표를 접속위치로 변경합니다
-    map.setCenter(locPosition);
-  }
-
-  // 지정 좌표로 부드럽게 이동시키기
-  function panTo(Xpos, Ypos) {
-    // 이동할 위도 경도 위치를 생성합니다
-    var moveLatLon = new kakao.maps.LatLng(Xpos, Ypos);
-
-    // 지도 중심을 부드럽게 이동시킵니다
-    // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
-    map.panTo(moveLatLon);
-  }
-</script>
-<script>
-  // 마커를 표시할 위치와 title 객체 배열입니다
-  var positions = $.get("./building_info.json", function(data) {
-    return $(data.positions);
-  }).then((positions) => { // 마커 생성 코드
-    let markers = [];
-    for (var i = 0; i < positions.positions.length; i ++) {
-      var position = positions.positions;
-
-      // 마커 이미지의 이미지 크기 입니다
-      var imageSize = new kakao.maps.Size(59, 69);
-      imageOption = {offset: new kakao.maps.Point(29, 69)};
-
-      // 마커 이미지를 생성합니다
-      var markerImage = new kakao.maps.MarkerImage(position[i]["imageSrc"], imageSize, imageOption);
-
-      var latlng = new kakao.maps.LatLng(position[i]["Xaxis"], position[i]["Yaxis"]);
-
-      // 마커를 생성합니다
-      var marker = new kakao.maps.Marker({
-        map: map, // 마커를 표시할 지도
-        position: latlng, // 마커를 표시할 위치
-        title : position[i]["title"], // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
-        image : markerImage // 마커 이미지
-      });
-      markers.push(marker);
-    }
-    return markers;
-  }).then((markers) => {
-    for (var i = 0; i < markers.length; i ++) {
-      let X = markers[i].getPosition().Ma;
-      let Y = markers[i].getPosition().La;
-
-      // 마커 클릭 event
-      kakao.maps.event.addListener(markers[i], 'click', function () {
-        //overlay.setMap(map);
-        panTo(X, Y);
-        setTimeout("modalPopUp()", 400);
-      });
-    }
-  });
 </script>
 </html>
